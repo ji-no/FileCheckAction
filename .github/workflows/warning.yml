@@ -14,15 +14,19 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@v22.2
+
       - name: Get specific changed files
         id: changed-files-specific
         uses: tj-actions/changed-files@v23
         with:
           #更新検出が必要なファイル・ディレクトリのパスを記述する。globが使える。
           files: |
-            dir1/checkfile1
-            dir1/checkfile2
-            dir1/checkfile3
+            target_dir/dir1/checkfile1
+            target_dir/dir1/checkfile2
+            target_dir/dir1/checkfile3
 
       - name: Warn specific changed files
         #changed-files-specificで指定されたファイルにおいて、Added,Copied,Modified,Renamed,Deletedが検出されると'true'になる
