@@ -1,0 +1,36 @@
+name: warning
+
+on:
+  pull_request:
+    paths:
+      - 'target_dir/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Get specific changed files
+        id: changed-files-specific
+        uses: tj-actions/changed-files@v23
+        with:
+          #更新検出が必要なファイル・ディレクトリのパスを記述する。globが使える。
+          files: |
+            dir1/checkfile1
+            dir1/checkfile2
+            dir1/checkfile3
+
+      - name: Warn specific changed files
+        #changed-files-specificで指定されたファイルにおいて、Added,Copied,Modified,Renamed,Deletedが検出されると'true'になる
+        if: steps.changed-files-specific.outputs.any_modified == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          gh pr comment --body \
+            "ファイルが変更されました" \
+            "${URL}"
